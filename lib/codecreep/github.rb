@@ -1,5 +1,6 @@
 require 'httparty'
 require 'pry'
+require 'io/console'
 
 module Codecreep
   class Github
@@ -12,7 +13,7 @@ module Codecreep
     end
 
     def get_followers(username)
-      self.class.get("/users/#{username}/followers?page=1&per_page=100")
+      self.class.get("/users/#{username}/followers?per_page=100")
       # page = 1
       # get_follows = self.class.get("/users/#{username}/followers?page=#{page}&per_page=100")
       # followers = {}
@@ -25,7 +26,7 @@ module Codecreep
     end
 
     def get_following(username)
-      self.class.get("users/#{username}/following?page=1&per_page=100")      
+      self.class.get("/users/#{username}/following?per_page=100")      
     end
   end
 end

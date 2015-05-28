@@ -27,31 +27,26 @@ module Codecreep
     end
 
     def create_user(username)
-      user = @github.get_user(username)
-      Codecreep::User.find_or_create_by(login: user['login']) do |t|
-        t.homepage = user['blog']
-        t.company = user['company']
-        t.follower_count = user['followers']
-        t.following_count = user['following']
-        t.repo_count = user['public_repos']
+      if Codecreep::User.find_by(login: username) == nil
+        user = @github.get_user(username)
+        Codecreep::User.find_or_create_by(login: user['login']) do |t|
+          t.homepage = user['blog']
+          t.company = user['company']
+          t.follower_count = user['followers']
+          t.following_count = user['following']
+          t.repo_count = user['public_repos']
+        end
       end
-    end
-
-    def verify_database(user_array)
-      user_array.delete_if { |hash| Codecreep::User.find_by(login: hash['login']) != nil} 
-      user_array
     end
 
     def fetch(user_array)
       user_array.each do |user|
         create_user(user)
         followers = @github.get_followers(user)
-        followers = verify_database(followers)
         followers.each do |x|
           create_user(x['login'])
           end
         following = @github.get_following(user)
-        following = verify_database(following)
         following.each do |x|
           create_user(x['login'])
         end
@@ -71,7 +66,7 @@ module Codecreep
       elsif input == "2"
         puts "Top 10 Most Friendly (most users they follow):"
         puts "Username -> Following Count"
-        Codecreep::User.order("following_count DESC").take(10).ach do |x|
+        Codecreep::User.order("following_count DESC").take(10).each do |x|
           puts "#{x.login} -> #{x.following_count}"
         end
       else
@@ -90,22 +85,16 @@ module Codecreep
                        " (seperate each user by a comma and a space):", 
                        /^(\w+[,]\s)+\w+$|^\w+$/)
         user_array = users.split(", ")
-        user_array.each do |login|
-          if Codecreep::User.find_by(login: login) != nil
-            user_array.delete(login)
-          end
-        end
         self.fetch(user_array)
       else
         self.analyze
       end
     end
-
   end
 end
 
 app = Codecreep::App.new
 app.run
-binding.pry
+
 
 
