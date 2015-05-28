@@ -35,13 +35,6 @@ module Codecreep
         t.following_count = user['following']
         t.repo_count = user['public_repos']
       end
-  
-      # login
-      # homepage
-      # company
-      # follower_count
-      # following_count
-      # repo_count
     end
 
     def fetch(user_array)
