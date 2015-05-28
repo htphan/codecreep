@@ -60,19 +60,19 @@ module Codecreep
       if input == "1"
         puts "Top 10 Most Popular (most followers):"
         puts "Username -> Followers Count"
-        Codecreep::User.order("follower_count DESC").take(10).each do |x|
+        Codecreep::User.order("follower_count DESC").limit(10).each do |x|
           puts "#{x.login} -> #{x.follower_count}"
         end
       elsif input == "2"
         puts "Top 10 Most Friendly (most users they follow):"
         puts "Username -> Following Count"
-        Codecreep::User.order("following_count DESC").take(10).each do |x|
+        Codecreep::User.order("following_count DESC").limit(10).each do |x|
           puts "#{x.login} -> #{x.following_count}"
         end
       else
         puts "Top 10 Most Networked (friendly + popular):"
         puts "Username -> (Followers Count + Following Count)"
-        Codecreep::User.order('following_count + follower_count DESC').take(10).each do |x|
+        Codecreep::User.order('following_count + follower_count DESC').limit(10).each do |x|
           puts "#{x.login} -> #{x.follower_count + x.following_count}"
         end
       end
