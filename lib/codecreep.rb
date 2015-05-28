@@ -37,14 +37,21 @@ module Codecreep
       end
     end
 
+    def verify_database(user_array)
+      user_array.delete_if { |hash| Codecreep::User.find_by(login: hash['login']) != nil} 
+      user_array
+    end
+
     def fetch(user_array)
       user_array.each do |user|
         create_user(user)
         followers = @github.get_followers(user)
+        followers = verify_database(followers)
         followers.each do |x|
           create_user(x['login'])
           end
         following = @github.get_following(user)
+        following = verify_database(following)
         following.each do |x|
           create_user(x['login'])
         end
@@ -83,6 +90,11 @@ module Codecreep
                        " (seperate each user by a comma and a space):", 
                        /^(\w+[,]\s)+\w+$|^\w+$/)
         user_array = users.split(", ")
+        user_array.each do |login|
+          if Codecreep::User.find_by(login: login) != nil
+            user_array.delete(login)
+          end
+        end
         self.fetch(user_array)
       else
         self.analyze
@@ -94,3 +106,6 @@ end
 
 app = Codecreep::App.new
 app.run
+binding.pry
+
+
