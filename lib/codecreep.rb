@@ -94,6 +94,7 @@ module Codecreep
 end
 
 app = Codecreep::App.new
+binding.pry
 app.run
 
 
