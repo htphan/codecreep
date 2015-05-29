@@ -11,7 +11,7 @@ module Codecreep
       self.class.get("/users/#{username}")
     end
 
-    def follows(username, page)
+    def follower_page(username, page)
       self.class.get("/users/#{username}/followers?page=#{page}&per_page=100")  
     end
 
@@ -19,12 +19,11 @@ module Codecreep
       # self.class.get("/users/#{username}/followers?per_page=100")
       page = 1
       followers = []
-      followers = followers + self.follows(username, page)
+      followers = followers + self.follower_page(username, page)
       until followers.length % 100 != 0
-        if self.follows(username, page)[0] != nil
+        if self.follower_page(username, page)[0] != nil
           page += 1
-          followers = followers + self.follows(username, page)
-          puts "#{page}"
+          followers = followers + self.follower_page(username, page)
         end
       end
       followers
